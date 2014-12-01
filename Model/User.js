@@ -1,4 +1,3 @@
-
 var userDao = require("../DatabaseConnections/UserDao");
 var userobj = new userDao();
 
@@ -16,7 +15,7 @@ User.prototype.validateUser = function(callback,request)
 	userobj.validateUser(function(err,res) {
 		callback(err,res);
 		
-	},request.fname,request.password);
+	},request.emailId,request.password);
 
 };
 
@@ -39,7 +38,7 @@ User.prototype.createUser = function(callback,request)
 	userobj.createUser(function(err,res) {
 		callback(err,res);
 		
-	},request.fname,request.lname,request.password);
+	},request.emailId,request.fname,request.lname,request.password,request.mobileNum);
 
 };
 
@@ -51,17 +50,17 @@ User.prototype.updateUser = function(callback,request)
 		
 		callback(err,res);
 		
-	},request.fname,request.lname,request.password);
+	},request.emailId,request.fname,request.lname,request.password,request.mobileNum);
 
 };
 
 
-User.prototype.remove = function(callback,request){
+User.prototype.remove = function(callback,emailId){
 	
 	
 	userobj.removeUser(function(err,res){
 		callback(err,res);
-	},request.fname);
+	},emailId);
 };
 
 
