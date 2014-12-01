@@ -20,10 +20,31 @@ Offer.prototype.viewOffers = function(callback,request)
 
 };
 
+Offer.prototype.byofferid = function(callback,request)
+{
+	
+	console.log("view Offers by offerid ");
+	offerobj.byofferid(function(err,res) {
+		callback(err,res);
+		
+	},request.OfferId);
+
+};
+
+Offer.prototype.byproductid = function(callback,request)
+{
+	
+	console.log("view Offers by productID ");
+	offerobj.byproductid(function(err,res) {
+		callback(err,res);
+		
+	},request.ProductID);
+
+};
 Offer.prototype.createOffer = function(callback,request)
 {
 	
-	console.log("Make an Offer function ");
+	//console.log("Make an Offer function ");
 	offerobj.createOffer(function(err,res) {
 		callback(err,res);
 		

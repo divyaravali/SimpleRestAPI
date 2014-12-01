@@ -112,7 +112,7 @@ exports.createoffer =function(req,res){
 	console.log("create offer");
 	var newOffer = new offer();
 	var a = req.param;
-	console.log("a"+ a);
+	//console.log("a"+ a);
 	//newUser.validateUser(req.param('username'), req.param('password'));
 	newOffer.createOffer(function(err,result) {
 		if(err){
@@ -127,7 +127,6 @@ exports.createoffer =function(req,res){
 //	console.log("Username"+ req.param('userName'));
 //	console.log("Username"+ req.param('password'));
 };
-
 
 exports.viewOffers =function(req,res){
 	console.log("view offers");
@@ -144,9 +143,38 @@ exports.viewOffers =function(req,res){
 
 	},req.body);
 };
+exports.byofferid =function(req,res){
+	console.log("view offers by offerid");
+	var newOffer = new offer();
+	
+	newOffer.byofferid(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			throw(err);
+		}else
+		{
+			res.json(result);
+		}
+
+	},req.body);
+};
 
 
+exports.byproductid =function(req,res){
+	console.log("view offers by productid");
+	var newOffer = new offer();
+	
+	newOffer.byproductid(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			throw(err);
+		}else
+		{
+			res.json(result);
+		}
 
+	},req.body);
+};
 
 exports.updateoffer =function(req,res){
 	//req.body.MemberShipID = "937-49-3682";

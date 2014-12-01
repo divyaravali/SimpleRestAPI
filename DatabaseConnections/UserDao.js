@@ -1,7 +1,8 @@
 
 var mongoose = require('mongoose');
 var db = mongoose.connect("mongodb://localhost:27017/nodetest2");
-
+var autoIncrement = require('mongoose-auto-increment');
+autoIncrement.initialize(db);
 	var UserSchema = new mongoose.Schema({
 		userId:Number,
 		emailId:String,
