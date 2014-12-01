@@ -12,7 +12,7 @@ var ejs = require("ejs");
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 4000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
@@ -37,16 +37,18 @@ if ('development' === app.get('env')) {
 app.get('/', routes.index);
 
 // Customer Related
-
 app.get('/viewCustomers', routes.viewCustomers);
-
-
 app.post('/validateUser', routes.validateUser);
-
-
-app.delete('/removeuser', routes.removeUser);
+app.del('/removeuser/:emailId', routes.removeUser);
 app.put('/updateuser', routes.updateuser);
 app.post('/create', routes.createuser);
+//offer
+app.get('/viewOffers', routes.viewOffers);
+
+app.put('/updateoffer', routes.updateoffer);
+app.post('/createoffer', routes.createoffer);
+//Product Related
+app.post('/createProduct', routes.createProduct);
 
 
 
