@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 //var autoIncrement = require('mongoose-auto-increment');
 //var db = mongoose.connect("mongodb://localhost:27017/nodetest2");
+var autoIncrement = require('mongoose-auto-increment');
+autoIncrement.initialize(db);
 var OfferSchema = new mongoose.Schema({
 	OfferId: Number,
 	//_id: OfferId,
@@ -109,17 +111,19 @@ OfferDao.prototype.updateOffer = function(callback,OfferID, BuyingQuantity, Offe
 
 
 
-OfferDao.prototype.createOffer = function(callback,OfferID, BuyingQuantity, OfferDetails, BuyerStatus, SellerStatus, OfferExpiry, ProductID, BuyerID, LastModified){
+OfferDao.prototype.createOffer = function(callback, BuyingQuantity, OfferDetails, BuyerStatus, SellerStatus, OfferExpiry, ProductID, BuyerID, LastModified){
 	console.log("OfferID", +OfferID);
-	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
-			{
-			console.log("offerexists",+offerexists);
-				if(offerexists == 1){
-					  callback('offer already exists' ,null);
-				}else{	
-	
-	var offer = new OfferModel({
-		OfferId: OfferID,
+	var offerCount;
+	var now = new Date();
+//	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
+//			{
+//			console.log("offerexists",+offerexists);
+//				if(offerexists == 0){
+	OfferModel.count(function( err, count ) {
+		offerCount=count+1;
+	    console.log("The number of offers "+offerCount);
+	    var offer = new OfferModel({
+		OfferId: offerCount,
 		BuyingQuantity: BuyingQuantity,
 		OfferDetails: OfferDetails,
 		BuyerStatus: BuyerStatus,	
@@ -127,7 +131,7 @@ OfferDao.prototype.createOffer = function(callback,OfferID, BuyingQuantity, Offe
 	    OfferExpiry: OfferExpiry,
 	    ProductID: ProductID,
 	    BuyerID: BuyerID,
-	    LastModified: LastModified
+	    LastModified: now
     });
 	 
 	    offer.save( function( err,offers ) {
@@ -138,10 +142,9 @@ OfferDao.prototype.createOffer = function(callback,OfferID, BuyingQuantity, Offe
 	            console.log( err );
 	            callback('ERROR',null);
 	        }
-	    
 	    });
-				}
-	});
+	    
+	   });
 
 };
 	
