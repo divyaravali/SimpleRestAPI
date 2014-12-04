@@ -1,19 +1,19 @@
 var mongoose = require('mongoose');
 //var autoIncrement = require('mongoose-auto-increment');
 //var db = mongoose.connect("mongodb://localhost:27017/nodetest2");
-var autoIncrement = require('mongoose-auto-increment');
-autoIncrement.initialize(db);
+//var autoIncrement = require('mongoose-auto-increment');
+//autoIncrement.initialize(db);
 var OfferSchema = new mongoose.Schema({
-	OfferId: Number,
-	//_id: OfferId,
-	BuyingQuantity: Number,
-	OfferDetails: String,
-	BuyerStatus: String,	
-    SellerStatus: String,
-    OfferExpiry: Date,
-    ProductID: Number,
-    BuyerID: Number,
-    LastModified: Date
+	offerId: Number,
+	//_id: offerId,
+	buyingQty: Number,
+	offeredDetails: String,
+	buyerStatus: String,	
+    sellerStatus: String,
+    offerExpiry: Date,
+    productId: Number,
+    buyerId: Number,
+    lastModified: Date
 });
 //OfferSchema.plugin(autoIncrement.plugin, { model: 'Offer', field:'_id' , startAt: 2, increment: 2});
 var OfferModel = mongoose.model( 'Offer', OfferSchema );
@@ -27,38 +27,16 @@ OfferDao.prototype.viewOffers = function(callback, searchby){
 	    });
 };
 
-OfferDao.prototype.byofferid = function(callback, OfferID){
-	console.log("OfferID", +OfferID);
-	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
+OfferDao.prototype.byofferId = function(callback, offerId){
+	console.log("offerId", +offerId);
+	OfferModel.count({offerId: offerId}, function(err, offerexists)
 			{
-		console.log("countbyofferid", +offerexists);
+		console.log("countbyofferId", +offerexists);
 				if(offerexists == 0){
 					  callback(' :offer does not exixts',null);
 				}else{
 			
-				OfferModel.find({OfferId:OfferID},function( err, offers ) {
-					 if( !err ) {
-				            console.log( 'offers are: ' );
-				            callback( null,offers );
-				        } else {
-				            console.log( err );
-				            callback('ERROR',null);
-				        }
-				});
-				}
-			});
-	
-};
-OfferDao.prototype.byproductid = function(callback, ProductId){
-	console.log("productid", +ProductId);
-	OfferModel.count({ProductID: ProductId}, function(err, offerexists)
-			{
-		console.log("countproductid", +offerexists);
-				if(offerexists == 0){
-					  callback(' :offer does not exixts',null);
-				}else{
-			
-				OfferModel.find({ProductID:ProductId},function( err, offers ) {
+				OfferModel.find({offerId:offerId},function( err, offers ) {
 					 if( !err ) {
 				            console.log( 'offers are: ' );
 				            callback( null,offers );
@@ -72,25 +50,49 @@ OfferDao.prototype.byproductid = function(callback, ProductId){
 	
 };
 
-OfferDao.prototype.updateOffer = function(callback,OfferID, BuyingQuantity, OfferDetails, BuyerStatus, SellerStatus, OfferExpiry, ProductID, BuyerID, LastModified){
-	console.log("OfferID", +OfferID);
-	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
+OfferDao.prototype.byproductId = function(callback, productId){
+	console.log("productId", +productId);
+	OfferModel.count({productId: productId}, function(err, offerexists)
+			{
+		console.log("countproductId", +offerexists);
+				if(offerexists == 0){
+					  callback(' :offer does not exixts',null);
+				}else{
+			
+				OfferModel.find({productId:productId},function( err, offers ) {
+					 if( !err ) {
+				            console.log( 'offers are: ' );
+				            callback( null,offers );
+				        } else {
+				            console.log( err );
+				            callback('ERROR',null);
+				        }
+				});
+				}
+			});
+	
+};
+
+OfferDao.prototype.updateOffer = function(callback,offerId, buyingQty, offeredDetails, buyerStatus, sellerStatus, offerExpiry, productId, buyerId){
+	console.log("offerId", +offerId);
+	var now = new Date();
+	OfferModel.count({offerId: offerId}, function(err, offerexists)
 			{
 			console.log("offerexists",+offerexists);
 				if(offerexists == 0){
 					  callback('offer does not exixts',null);
 				}else{
 			
-				OfferModel.findOne({OfferId:OfferID},function( err, offers ) {
-					//offers.OfferId = OfferID;
-					offers.BuyingQuantity=  BuyingQuantity;
-					offers.OfferDetails =  OfferDetails;
-					offers.BuyerStatus=  BuyerStatus;
-					offers.SellerStatus =  SellerStatus;
-					offers.OfferExpiry=  OfferExpiry;
-					offers.ProductID =  ProductID;
-					offers.BuyerID=  BuyerID;
-					offers.LastModified =  LastModified;
+				OfferModel.findOne({offerId:offerId},function( err, offers ) {
+					//offers.offerId = offerId;
+					offers.buyingQty=  buyingQty;
+					offers.offeredDetails =  offeredDetails;
+					offers.buyerStatus=  buyerStatus;
+					offers.sellerStatus =  sellerStatus;
+					offers.offerExpiry=  offerExpiry;
+					offers.productId =  productId;
+					offers.buyerId=  buyerId;
+					offers.lastModified =  now;
 					
 				    offers.save(function( err,offers ) {
 			        if( !err ) {
@@ -111,11 +113,11 @@ OfferDao.prototype.updateOffer = function(callback,OfferID, BuyingQuantity, Offe
 
 
 
-OfferDao.prototype.createOffer = function(callback, BuyingQuantity, OfferDetails, BuyerStatus, SellerStatus, OfferExpiry, ProductID, BuyerID, LastModified){
-	console.log("OfferID", +OfferID);
+OfferDao.prototype.createOffer = function(callback, buyingQty, offeredDetails, buyerStatus, sellerStatus, offerExpiry, productId, buyerId){
+	//console.log("offerId", +offerId);
 	var offerCount;
 	var now = new Date();
-//	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
+//	OfferModel.count({offerId: offerId}, function(err, offerexists)
 //			{
 //			console.log("offerexists",+offerexists);
 //				if(offerexists == 0){
@@ -123,15 +125,15 @@ OfferDao.prototype.createOffer = function(callback, BuyingQuantity, OfferDetails
 		offerCount=count+1;
 	    console.log("The number of offers "+offerCount);
 	    var offer = new OfferModel({
-		OfferId: offerCount,
-		BuyingQuantity: BuyingQuantity,
-		OfferDetails: OfferDetails,
-		BuyerStatus: BuyerStatus,	
-	    SellerStatus: SellerStatus,
-	    OfferExpiry: OfferExpiry,
-	    ProductID: ProductID,
-	    BuyerID: BuyerID,
-	    LastModified: now
+		offerId: offerCount,
+		buyingQty: buyingQty,
+		offeredDetails: offeredDetails,
+		buyerStatus: buyerStatus,	
+	    sellerStatus: sellerStatus,
+	    offerExpiry: offerExpiry,
+	    productId: productId,
+	    buyerId: buyerId,
+	    lastModified: now
     });
 	 
 	    offer.save( function( err,offers ) {

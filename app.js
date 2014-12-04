@@ -44,10 +44,8 @@ app.put('/updateuser', routes.updateuser);
 app.post('/create', routes.createuser);
 //offer
 app.get('/viewOffers', routes.viewOffers);
-app.get('/byofferid', routes.byofferid);
-app.get('/byproductid', routes.byproductid);
-app.put('/byofferid', routes.byofferid);
-app.put('/byproductid', routes.byproductid);
+app.get('/byofferid/:offerId', routes.byofferid);
+app.get('/byproductid/:productId', routes.byproductid);
 app.put('/updateoffer', routes.updateoffer);
 app.post('/createoffer', routes.createoffer);
 //Product Related

@@ -20,25 +20,26 @@ Offer.prototype.viewOffers = function(callback,request)
 
 };
 
-Offer.prototype.byofferid = function(callback,request)
+Offer.prototype.byofferId = function(callback,offerId)
 {
-	
-	console.log("view Offers by offerid ");
-	offerobj.byofferid(function(err,res) {
+	console.log(offerId);
+	console.log("view Offers by offerId ");
+	offerobj.byofferId(function(err,res) {
 		callback(err,res);
 		
-	},request.OfferId);
+	},offerId);
 
 };
 
-Offer.prototype.byproductid = function(callback,request)
+Offer.prototype.byproductId = function(callback,productId)
 {
 	
-	console.log("view Offers by productID ");
-	offerobj.byproductid(function(err,res) {
+	console.log("view Offers by productId ");
+	//console.log(productId);
+	offerobj.byproductId(function(err,res) {
 		callback(err,res);
 		
-	},request.ProductID);
+	},productId);
 
 };
 Offer.prototype.createOffer = function(callback,request)
@@ -48,7 +49,7 @@ Offer.prototype.createOffer = function(callback,request)
 	offerobj.createOffer(function(err,res) {
 		callback(err,res);
 		
-	},request.OfferId, request.BuyingQuantity, request.OfferDetails, request.BuyerStatus, request.SellerStatus, request.OfferExpiry, request.ProductID, request.BuyerID, request.LastModified);
+	}, request.buyingQty, request.offeredDetails, request.buyerStatus, request.sellerStatus, request.offerExpiry, request.productId, request.buyerId);
 
 };
 
@@ -60,7 +61,7 @@ Offer.prototype.updateOffer = function(callback,request)
 		
 		callback(err,res);
 		
-	},request.OfferId, request.BuyingQuantity, request.OfferDetails, request.BuyerStatus, request.SellerStatus, request.OfferExpiry, request.ProductID, request.BuyerID, request.LastModified);
+	},request.offerId, request.buyingQty, request.offeredDetails, request.buyerStatus, request.sellerStatus, request.offerExpiry, request.productId, request.buyerId);
 
 };
 

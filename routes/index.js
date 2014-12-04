@@ -156,14 +156,13 @@ exports.byofferid =function(req,res){
 			res.json(result);
 		}
 
-	},req.body);
+	},req.params.offerId);
 };
 
 
 exports.byproductid =function(req,res){
-	console.log("view offers by productid");
+//	console.log("view offers by productid");
 	var newOffer = new offer();
-	
 	newOffer.byproductid(function(err,result) {
 		if(err){
 			console.log("Error"+err);
@@ -172,8 +171,8 @@ exports.byproductid =function(req,res){
 		{
 			res.json(result);
 		}
-
-	},req.body);
+		
+	},req.params.productId);
 };
 
 exports.updateoffer =function(req,res){
