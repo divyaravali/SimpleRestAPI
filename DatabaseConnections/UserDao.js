@@ -1,14 +1,11 @@
-
 var mongoose = require('mongoose');
 var db = mongoose.connect("mongodb://localhost:27017/nodetest2");
-var autoIncrement = require('mongoose-auto-increment');
-autoIncrement.initialize(db);
+var uuid = require('node-uuid');
 	var UserSchema = new mongoose.Schema({
-		userId:Number,
+		userId:String,
 		emailId:String,
 	    fname: String,
 	    lname: String,
-	    password: String,
 	    mobileNum:Number
 	});
 	var UserModel = mongoose.model( 'User', UserSchema );
@@ -77,23 +74,23 @@ UserDao.prototype.updateUser = function(callback,emailID, fname, lname, password
 
 
 
-UserDao.prototype.createUser = function(callback, emailID, fname, lname, password, mobileNum){
-	var userCount;
+UserDao.prototype.createUser = function(callback, emailID, fname, lname, mobileNum){
+	//var userCount;
 	
 	 UserModel.count({emailId: emailID}, function(err, emailExists)
 	 {
 			 if(emailExists == 0){
 
-					UserModel.count(function( err, count ) {
-						
-						userCount=count+1;
-						console.log("The number of users "+userCount);
+					//UserModel.count(function( err, count ) {
+				 		var userId = uuid.v4();
+				 		userId = userId.substr(userId.length - 5);
+						//userCount=count+1;
+//						console.log("The number of users "+userCount);
 						var user = new UserModel({
-							userId:userCount,
+							userId:userId,
 							emailId:emailID,
 					        fname: fname,
 					        lname: lname,
-					        password: password,
 					        mobileNum:mobileNum
 					    });
 						
@@ -107,7 +104,7 @@ UserDao.prototype.createUser = function(callback, emailID, fname, lname, passwor
 					        }
 					    });
 						
-					});
+					//});
 				 
 			 }else{
 				 callback('User Already Exits',null);
@@ -131,6 +128,30 @@ UserDao.prototype.removeUser = function (callback, emailID){
 		 
 	 }else{
 			UserModel.find({emailId:emailID}).remove(function( err, user ) {
+		        
+		            if( !err ) {
+		            	console.log("no eror"+user.userId);
+		                callback(null,user);
+		            } else {
+		            	console.log(" eror");
+		                console.log( err );
+		                callback('ERROR',null);
+		            }
+		        });
+		    }
+	});
+	
+}
+UserDao.prototype.getUserById = function (callback, userId){
+
+	console.log("in get use by id" +userId);
+	UserModel.count({userId:userId}, function(err, userExists)
+	{
+	 if(userExists == 0){
+		 callback('User does not Exits',null);
+		 
+	 }else{
+			UserModel.find({userId:userId}, function( err, user ) {
 		        
 		            if( !err ) {
 		            	console.log("no eror"+user.userId);

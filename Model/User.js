@@ -38,7 +38,7 @@ User.prototype.createUser = function(callback,request)
 	userobj.createUser(function(err,res) {
 		callback(err,res);
 		
-	},request.emailId,request.fname,request.lname,request.password,request.mobileNum);
+	},request.emailId,request.firstName,request.lastName,request.mobile);
 
 };
 
@@ -61,6 +61,15 @@ User.prototype.remove = function(callback,emailId){
 	userobj.removeUser(function(err,res){
 		callback(err,res);
 	},emailId);
+};
+
+
+User.prototype.getUserById = function(callback,userId){
+	
+	
+	userobj.getUserById(function(err,res){
+		callback(err,res);
+	},userId);
 };
 
 

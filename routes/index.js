@@ -1,14 +1,16 @@
-
+var comment = require('../Model/Comment');
 var user = require('../Model/User');
+var Product = require('../Model/Product');
+var Category = require('../Model/Category');
 var offer = require('../Model/Offer');
 var ejs = require("ejs");
 
-// hadrcoded value. we need to get the value from session
+//hadrcoded value. we need to get the value from session
 
 
 exports.index = function(req, res){
 	res.render('WelcomePage');
-  
+
 };
 
 exports.validateUser =function(req,res){
@@ -24,23 +26,22 @@ exports.validateUser =function(req,res){
 		}
 
 	},req.body);
-	
+
 	console.log("Username "+ req.param('userName'));
 };
 
 
 exports.createuser =function(req,res){
-	console.log("create user");
+
 	var newUser = new user();
-	var a = req.param;
-	console.log("a"+ a);
-	//newUser.validateUser(req.param('username'), req.param('password'));
 	newUser.createUser(function(err,result) {
 		if(err){
 			console.log("Error"+err);
-			throw(err);
+			//throw(err);
+			res.json(err);
 		}else
 		{
+			console.log(result);
 			res.json(result);
 		}
 
@@ -50,11 +51,10 @@ exports.createuser =function(req,res){
 };
 
 
-
 exports.viewCustomers =function(req,res){
 	console.log("view customers");
 	var newUser = new user();
-	
+
 	newUser.viewCustomers(function(err,result) {
 		if(err){
 			console.log("Error"+err);
@@ -67,9 +67,6 @@ exports.viewCustomers =function(req,res){
 	},req.body);
 };
 
-
-
-
 exports.updateuser =function(req,res){
 	//req.body.MemberShipID = "937-49-3682";
 	console.log("Update user");
@@ -77,7 +74,8 @@ exports.updateuser =function(req,res){
 	newUser.updateUser(function(err,result) {
 		if(err){
 			console.log("Error"+err);
-			throw(err);
+			res.json(err);
+			//throw(err);
 		}else
 		{
 			console.log("success");
@@ -87,33 +85,196 @@ exports.updateuser =function(req,res){
 	},req.body);
 };
 
-
-
-exports.removeUser = function(req,res){
-	//var memberTypeID = req.session.name;  //hard code here, should get from user add/update/delete page
-
+exports.getUserById = function(req,res){
+	console.log("In get user by id"+req.params.userId);
 	var newUser = new user();
-	newUser.remove(function(err,result){
+	newUser.getUserById(function(err,result){
 		if(err){
-			console.log("remove user error"+err);
-			res.json(res.json({"status": err}));
+			console.log("Get user by Id"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
 			//throw(err);
 		}else{
 			//return number of rows that deleted
 			console.log("return "+result);
-			res.json({"status": "success"});
+			res.json(result);
 		}
 
-	}, req.body);
+	}, req.params.userId);
 
 };
-//offer related
+
+exports.removeUser = function(req,res){
+	console.log("remove user error"+req.params.emailId);
+	var newUser = new user();
+	newUser.remove(function(err,result){
+		if(err){
+			console.log("remove user error"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
+			//throw(err);
+		}else{
+			//return number of rows that deleted
+			console.log("return "+result);
+			res.json({"status": "success", "Message": "User Deleted"});
+		}
+
+	}, req.params.emailId);
+
+};
+
+//Product Related
+exports.createProduct =function(req,res){
+
+	var newProduct = new Product();
+	newProduct.createProduct(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			//throw(err);
+			res.json(err);
+		}else
+		{
+			res.json(result);
+		}
+
+	},req.body,req.params.categoryId);
+
+};
+
+exports.updateProduct =function(req,res){
+	console.log("Update Product");
+	var newProduct = new Product();
+	newProduct.updateProduct(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			res.json(err);
+			//throw(err);
+		}else
+		{
+			console.log("success");
+			res.json(result);
+		}
+
+	},req.body,req.params.categoryId,req.params.productId);
+};
+
+exports.removeProduct = function(req,res){
+	//console.log("remove product error"+req.params.emailId);
+	var newProduct = new Product();
+	newProduct.remove(function(err,result){
+		if(err){
+			console.log("remove Product error"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
+			//throw(err);
+		}else{
+			//return number of rows that deleted
+			console.log("return "+result);
+			res.json({});
+		}
+
+	}, req.params.productId,req.params.categoryId);
+
+};
+
+exports.getProductById = function(req,res){
+	console.log("In get user by id"+req.params.productId);
+	var newProduct = new Product();
+	newProduct.getProductById(function(err,result){
+		if(err){
+			console.log("Get Product by Id"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
+			//throw(err);
+		}else{
+			//return number of rows that deleted
+			console.log("return "+result);
+			res.json(result);
+		}
+
+	}, req.params.productId,req.params.categoryId);
+
+};
+
+exports.getProductsBycatId = function(req,res){
+	console.log("In get Product by id"+req.params.categoryId);
+	var newProduct = new Product();
+	newProduct.getProductsBycatId(function(err,result){
+		if(err){
+			console.log("Get Product by Id"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
+			//throw(err);
+		}else{
+			//return number of rows that deleted
+			console.log("return "+result);
+			res.json({'products':result});
+		}
+
+	}, req.params.categoryId);
+
+};
+
+//Category
+exports.createCategory =function(req,res){
+
+	var newCategory = new Category();
+	newCategory.createCategory(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			//throw(err);
+			res.json(err);
+		}else
+		{
+			res.json(result);
+		}
+
+	},req.body);
+
+};
+
+exports.viewCategories =function(req,res){
+	console.log("view categories");
+	var newCategory = new Category();
+
+	newCategory.viewCategories(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			throw(err);
+		}else
+		{
+			res.json({'categories':result});
+		}
+
+	},req.body);
+};
+
+
+exports.getCategoryById = function(req,res){
+	console.log("In get user by id"+req.params.categoryId);
+	var newCategory = new Category();
+	newCategory.getCategoryById(function(err,result){
+		if(err){
+			console.log("Get category by Id"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
+			//throw(err);
+		}else{
+			//return number of rows that deleted
+			console.log("return "+result);
+			res.json(result);
+		}
+
+	}, req.params.categoryId);
+
+};
+
 exports.createoffer =function(req,res){
-	console.log("create offer");
+	console.log("create offer\n");
 	var newOffer = new offer();
 	var a = req.param;
-	//console.log("a"+ a);
-	//newUser.validateUser(req.param('username'), req.param('password'));
+	console.log("body: "+req.body);
+	console.log("req.params.productId: "+req.params.productId);
 	newOffer.createOffer(function(err,result) {
 		if(err){
 			console.log("Error"+err);
@@ -123,15 +284,13 @@ exports.createoffer =function(req,res){
 			res.json(result);
 		}
 
-	},req.body);
-//	console.log("Username"+ req.param('userName'));
-//	console.log("Username"+ req.param('password'));
+	},req.params.productId,req.body);
 };
 
 exports.viewOffers =function(req,res){
 	console.log("view offers");
 	var newOffer = new offer();
-	
+
 	newOffer.viewOffers(function(err,result) {
 		if(err){
 			console.log("Error"+err);
@@ -141,12 +300,12 @@ exports.viewOffers =function(req,res){
 			res.json(result);
 		}
 
-	},req.body);
+	},req.params.categoryId);
 };
 exports.byofferid =function(req,res){
 	console.log("view offers by offerid");
 	var newOffer = new offer();
-	
+
 	newOffer.byofferid(function(err,result) {
 		if(err){
 			console.log("Error"+err);
@@ -161,9 +320,10 @@ exports.byofferid =function(req,res){
 
 
 exports.byproductid =function(req,res){
-//	console.log("view offers by productid");
+	console.log("view offers by product id");
 	var newOffer = new offer();
-	newOffer.byproductid(function(err,result) {
+
+	newOffer.viewOffers(function(err,result) {
 		if(err){
 			console.log("Error"+err);
 			throw(err);
@@ -171,13 +331,13 @@ exports.byproductid =function(req,res){
 		{
 			res.json(result);
 		}
-		
-	},req.params.productId);
+
+	},req.params.productId,req.params.categoryId);
 };
 
 exports.updateoffer =function(req,res){
 	//req.body.MemberShipID = "937-49-3682";
-	console.log("Update offer");
+	console.log("Update offer"+ req.params.offerId);
 	var newOffer = new offer();
 	newOffer.updateOffer(function(err,result) {
 		if(err){
@@ -189,27 +349,56 @@ exports.updateoffer =function(req,res){
 			res.json(result);
 		}
 
-	},req.body);
+	},req.params.offerId,req.params.productId,req.body);
+};
+exports.removeOffer = function(req,res){
+	
+	var newOffer = new offer();
+	newOffer.remove(function(err,result){
+		if(err){
+			console.log("remove offer error"+err);
+			res.json(err);
+			//res.json(res.json({"status": err}));
+			//throw(err);
+		}else{
+			//return number of rows that deleted
+			console.log("return "+result);
+			res.json({});
+		}
+
+	}, req.params.productId,req.params.categoryId,req.params.offerId);
+
 };
 
-
-
-
-//Product Related
-exports.createProduct =function(req,res){
-	
-	var newProduct = new Product();
-	newProduct.createProduct(function(err,result) {
+//comment
+exports.postComment =function(req,res){
+	console.log("Post Comment");
+	var  newcomment = new comment();
+	newcomment.postComment(function(err,result) {
 		if(err){
 			console.log("Error"+err);
-			//throw(err);
-			res.json(err);
+			throw(err);
 		}else
 		{
+			console.log("success");
+			res.json(result);
+		}
+
+	},req.params,req.body);
+};
+
+exports.getCommentHistory =function(req,res){
+	console.log("Get Comment History");
+	var newComment = new comment();
+	newComment.getCommentHistory(function(err,result) {
+		if(err){
+			console.log("Error"+err);
+			throw(err);
+		}else
+		{
+			console.log("success");
 			res.json(result);
 		}
 
 	},req.body);
-	//console.log("Username"+ req.param('userName'));
-	//console.log("Username"+ req.param('password'));
 };

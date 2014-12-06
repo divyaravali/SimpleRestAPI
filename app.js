@@ -37,22 +37,45 @@ if ('development' === app.get('env')) {
 app.get('/', routes.index);
 
 // Customer Related
-app.get('/viewCustomers', routes.viewCustomers);
-app.post('/validateUser', routes.validateUser);
-app.del('/removeuser/:emailId', routes.removeUser);
-app.put('/updateuser', routes.updateuser);
-app.post('/create', routes.createuser);
-//offer
-app.get('/viewOffers', routes.viewOffers);
-app.get('/byofferid/:offerId', routes.byofferid);
-app.get('/byproductid/:productId', routes.byproductid);
-app.put('/updateoffer', routes.updateoffer);
-app.post('/createoffer', routes.createoffer);
+
+//app.get('/viewCustomers', routes.viewCustomers);
+
+
+//app.post('/validateUser', routes.validateUser);
+
+
+//app.del('/removeuser/:emailId', routes.removeUser);
+//app.put('/updateuser', routes.updateuser);
+app.post('/users', routes.createuser);//checked
+app.get('/users/:userId', routes.getUserById);//checked
+
+//Category
+app.post('/category', routes.createCategory);//checked
+app.get('/category', routes.viewCategories);//checked
+app.get('/category/:categoryId', routes.getCategoryById);//checked
+
 //Product Related
-app.post('/createProduct', routes.createProduct);
+app.post('/category/:categoryId/product', routes.createProduct);//checked
+app.put('/category/:categoryId/product/:productId', routes.updateProduct);//checked
+app.del('/category/:categoryId/product/:productId', routes.removeProduct);//checked
+app.get('/category/:categoryId/product/:productId', routes.getProductById);//checked
+app.get('/category/:categoryId/product', routes.getProductsBycatId);//checked
 
 
+//offer
+app.get('/category/:categoryId/offer', routes.viewOffers);
+app.get('/category/:categoryId/product/:productId/offer', routes.byproductid);//checked
+app.post('/category/:categoryId/product/:productId/offer', routes.createoffer);//checked
+app.get('/category/:categoryId/product/:productId/offer/:offerId', routes.byofferid);//checked
+app.put('/category/:categoryId/product/:productId/offer/:offerId', routes.updateoffer);//checked
+app.del('/category/:categoryId/product/:productId/offer/:offerId', routes.removeOffer);
+//app.get('/byproductid', routes.byproductid);
+//app.put('/byofferid', routes.byofferid);
 
+//app.post('/createoffer', routes.createoffer);
+//comment
+app.post('/category/:categoryId/product/:productId/offer/:offerId/comment', routes.postComment);
+app.get('/getCommentHistory', routes.getCommentHistory);
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
