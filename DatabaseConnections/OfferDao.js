@@ -1,152 +1,181 @@
 var mongoose = require('mongoose');
 //var autoIncrement = require('mongoose-auto-increment');
 //var db = mongoose.connect("mongodb://localhost:27017/nodetest2");
+//var autoIncrement = require('mongoose-auto-increment');
+//autoIncrement.initialize(db);
+var ProductDao = require("../DatabaseConnections/ProductDao");
+var uuid = require('node-uuid');
+
+var CommentSchema = new mongoose.Schema({
+	CommentId : Number,
+	Comment : String,
+	userId : String
+	});
+var CommentModel = mongoose.model( 'Comment', CommentSchema );
 var OfferSchema = new mongoose.Schema({
-	OfferId: Number,
-	//_id: OfferId,
-	BuyingQuantity: Number,
-	OfferDetails: String,
-	BuyerStatus: String,	
-    SellerStatus: String,
-    OfferExpiry: Date,
-    ProductID: Number,
-    BuyerID: Number,
-    LastModified: Date
+	offerId: String,
+	buyingQty: Number,
+	offeredDetails: String,
+	buyerStatus: String,
+	sellerStatus: String,
+	offerExpiry: Date,
+	productId: Number,
+	buyerId: Number,
+	Comment: [CommentSchema],
+	lastModified: Date
 });
 //OfferSchema.plugin(autoIncrement.plugin, { model: 'Offer', field:'_id' , startAt: 2, increment: 2});
 var OfferModel = mongoose.model( 'Offer', OfferSchema );
 
 function OfferDao() {
-	}
+}
 
-OfferDao.prototype.viewOffers = function(callback, searchby){
-	OfferModel.find(function( err, offers ) {
+OfferDao.prototype.byproductId = function(callback, productId, categoryId){
+	OfferModel.find({productId:productId},function( err, offers ) {
 		callback(err, offers);
-	    });
+	});
+};
+OfferDao.prototype.viewOffers = function(callback, categoryId){
+	OfferModel.find({},function( err, offers ) {
+		callback(err, offers);
+	});
 };
 
-OfferDao.prototype.byofferid = function(callback, OfferID){
-	console.log("OfferID", +OfferID);
-	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
+OfferDao.prototype.byofferId = function(callback, offerId){
+	console.log("offerId" +offerId);
+	OfferModel.count({offerId: offerId}, function(err, offerexists)
 			{
-		console.log("countbyofferid", +offerexists);
-				if(offerexists == 0){
-					  callback(' :offer does not exixts',null);
-				}else{
-			
-				OfferModel.find({OfferId:OfferID},function( err, offers ) {
-					 if( !err ) {
-				            console.log( 'offers are: ' );
-				            callback( null,offers );
-				        } else {
-				            console.log( err );
-				            callback('ERROR',null);
-				        }
-				});
+		console.log("countbyofferId", +offerexists);
+		if(offerexists == 0){
+			callback(' :offer does not exixts',null);
+		}else{
+
+			OfferModel.find({offerId:offerId},function( err, offers ) {
+				if( !err ) {
+					console.log( 'offers are: ' );
+					callback( null,offers );
+				} else {
+					console.log( err );
+					callback('ERROR',null);
 				}
 			});
-	
-};
-OfferDao.prototype.byproductid = function(callback, ProductId){
-	console.log("productid", +ProductId);
-	OfferModel.count({ProductID: ProductId}, function(err, offerexists)
-			{
-		console.log("countproductid", +offerexists);
-				if(offerexists == 0){
-					  callback(' :offer does not exixts',null);
-				}else{
-			
-				OfferModel.find({ProductID:ProductId},function( err, offers ) {
-					 if( !err ) {
-				            console.log( 'offers are: ' );
-				            callback( null,offers );
-				        } else {
-				            console.log( err );
-				            callback('ERROR',null);
-				        }
-				});
-				}
+		}
 			});
-	
+
 };
 
-OfferDao.prototype.updateOffer = function(callback,OfferID, BuyingQuantity, OfferDetails, BuyerStatus, SellerStatus, OfferExpiry, ProductID, BuyerID, LastModified){
-	console.log("OfferID", +OfferID);
-	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
+
+OfferDao.prototype.updateOffer = function(callback,offerId, productId,buyingQty, offeredDetails, buyerStatus, sellerStatus, offerExpiry, buyerId, Comment){
+	console.log("offerId: " +offerId);
+	var now = new Date();
+	OfferModel.count({offerId: offerId}, function(err, offerexists)
 			{
+
+		if(offerexists == 0){
+			callback('offer does not exixts',null);
+		}else{
 			console.log("offerexists",+offerexists);
-				if(offerexists == 0){
-					  callback('offer does not exixts',null);
-				}else{
-			
-				OfferModel.findOne({OfferId:OfferID},function( err, offers ) {
-					//offers.OfferId = OfferID;
-					offers.BuyingQuantity=  BuyingQuantity;
-					offers.OfferDetails =  OfferDetails;
-					offers.BuyerStatus=  BuyerStatus;
-					offers.SellerStatus =  SellerStatus;
-					offers.OfferExpiry=  OfferExpiry;
-					offers.ProductID =  ProductID;
-					offers.BuyerID=  BuyerID;
-					offers.LastModified =  LastModified;
-					
-				    offers.save(function( err,offers ) {
-			        if( !err ) {
-			            console.log( 'updated' );
-			            callback( null,offers );
-			        } else {
-			            console.log( err );
-			            callback('ERROR',null);
-			        }
-			    });
-				});	
-				}
+			console.log()
+			OfferModel.findOne({offerId:offerId},function( err, offers ) {
+				//offers.offerId = offerId;
+				console.log(offers);
+				offers.buyingQty=  buyingQty;
+				offers.offeredDetails =  offeredDetails;
+				offers.buyerStatus=  buyerStatus;
+				offers.sellerStatus =  sellerStatus;
+				offers.offerExpiry=  new Date(offerExpiry);
+				offers.productId =  productId;
+				offers.buyerId=  buyerId;
+				offers.Comment = [Comment];
+				offers.lastModified =  now;
+				
+
+				offers.save(function( err,offers ) {
+					if( !err ) {
+						console.log( 'updated' );
+						callback( null,offers );
+					} else {
+						console.log( err );
+						callback('ERROR',null);
+					}
+				});
+			});	
+		}
 			});
+
+};
+
+
+
+
+
+OfferDao.prototype.createOffer = function(callback, productId, buyingQty, offeredDetails, buyerStatus, sellerStatus, offerExpiry, buyerId, Comment){
+	//console.log("offerId", +offerId);
+	var offerCount;
+	var now = new Date();
+//	ProductDao({offerId: offerId}, function(err, offerexists)
+//	{
+	console.log("productId: "+offerExpiry);
+//	if(offerexists == 0){
+	OfferModel.count(function( err, count ) {
+		var offerId = uuid.v4();
+		offerId = offerId.substr(offerId.length - 5);
+		offerCount=count+1;
+		console.log("The number of offers "+offerCount);
+		console.log("The number of offers "+offerId);
+		var offer = new OfferModel({
+			offerId: offerId,
+			buyingQty: buyingQty,
+			offeredDetails: offeredDetails,
+			buyerStatus: buyerStatus,	
+			sellerStatus: sellerStatus,
+			offerExpiry: offerExpiry,
+			productId: productId,
+			buyerId: buyerId,
+			Comment: [Comment],
+			lastModified : now
 			
-		};
+		});
 
+		offer.save( function( err,offers ) {
+			if( !err ) {
+				console.log( 'created'+offer + offers );
 
+				callback( null,offers );
+			} else {
+				console.log( err );
+				callback('ERROR',null);
+			}
+		});
 
-
-
-OfferDao.prototype.createOffer = function(callback,OfferID, BuyingQuantity, OfferDetails, BuyerStatus, SellerStatus, OfferExpiry, ProductID, BuyerID, LastModified){
-	console.log("OfferID", +OfferID);
-	OfferModel.count({OfferId: OfferID}, function(err, offerexists)
-			{
-			console.log("offerexists",+offerexists);
-				if(offerexists == 1){
-					  callback('offer already exists' ,null);
-				}else{	
-	
-	var offer = new OfferModel({
-		OfferId: OfferID,
-		BuyingQuantity: BuyingQuantity,
-		OfferDetails: OfferDetails,
-		BuyerStatus: BuyerStatus,	
-	    SellerStatus: SellerStatus,
-	    OfferExpiry: OfferExpiry,
-	    ProductID: ProductID,
-	    BuyerID: BuyerID,
-	    LastModified: LastModified
-    });
-	 
-	    offer.save( function( err,offers ) {
-	        if( !err ) {
-	            console.log( 'created' );
-	            callback( null,offer );
-	        } else {
-	            console.log( err );
-	            callback('ERROR',null);
-	        }
-	    
-	    });
-				}
 	});
 
 };
+
+OfferDao.prototype.removeOffer = function (callback, productId,categoryId,offerId){
+
+	console.log("in remove offer: " +offerId);
+	OfferModel.count({productId: productId,offerId: offerId}, function(err, offerExists)
+	{
+	 if(offerExists == 0){
+		 callback('Offer does not Exits',null);
+		 
+	 }else{
+			OfferModel.find({productId: productId,offerId: offerId}).remove(function( err, offer ) {
+		        
+		            if( !err ) {
+		            	console.log("no eror"+offer.offerId);
+		                callback(null,offer);
+		            } else {
+		            	console.log(" eror");
+		                console.log( err );
+		                callback('ERROR',null);
+		            }
+		        });
+		    }
+	});
 	
-
-
+}
 
 
 

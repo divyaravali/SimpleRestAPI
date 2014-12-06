@@ -9,63 +9,70 @@ function Offer() {
 }
 
 
-Offer.prototype.viewOffers = function(callback,request)
+Offer.prototype.viewOffers = function(callback,categoryId)
 {
-	
+
 	console.log("view Offers function ");
 	offerobj.viewOffers(function(err,res) {
 		callback(err,res);
-		
-	});
+
+	},categoryId);
 
 };
-
-Offer.prototype.byofferid = function(callback,request)
+Offer.prototype.byproductId = function(callback,productId,categoryId)
 {
-	
-	console.log("view Offers by offerid ");
-	offerobj.byofferid(function(err,res) {
+
+	console.log("view Offers function ");
+	offerobj.byproductId(function(err,res) {
 		callback(err,res);
-		
-	},request.OfferId);
+
+	},productId,categoryId);
 
 };
 
-Offer.prototype.byproductid = function(callback,request)
+Offer.prototype.byofferId = function(callback,offerId)
 {
-	
-	console.log("view Offers by productID ");
-	offerobj.byproductid(function(err,res) {
+
+	console.log("view Offers by offerId ");
+	offerobj.byofferId(function(err,res) {
 		callback(err,res);
-		
-	},request.ProductID);
+
+	},offerId);
 
 };
-Offer.prototype.createOffer = function(callback,request)
+
+
+Offer.prototype.createOffer = function(callback,productId,request)
 {
-	
-	//console.log("Make an Offer function ");
+
+	console.log("Make an Offer function "+ productId);
 	offerobj.createOffer(function(err,res) {
 		callback(err,res);
-		
-	},request.OfferId, request.BuyingQuantity, request.OfferDetails, request.BuyerStatus, request.SellerStatus, request.OfferExpiry, request.ProductID, request.BuyerID, request.LastModified);
+
+	},productId,request.buyingQty, request.offeredDetails, request.buyerStatus, request.sellerStatus, request.offerExpiry, request.buyerId, request.comment);
 
 };
 
 
-Offer.prototype.updateOffer = function(callback,request)
+Offer.prototype.updateOffer = function(callback,offerId,productId,request)
 {
-	console.log("Update Offer function ");
+	console.log("Update Offer function "+offerId);
+	console.log(request);
 	offerobj.updateOffer(function(err,res) {
-		
+
 		callback(err,res);
-		
-	},request.OfferId, request.BuyingQuantity, request.OfferDetails, request.BuyerStatus, request.SellerStatus, request.OfferExpiry, request.ProductID, request.BuyerID, request.LastModified);
+
+	},offerId,productId,request.buyingQty, request.offeredDetails, request.buyerStatus, request.sellerStatus, request.offerExpiry, request.buyerId, request.comment);
 
 };
 
+Offer.prototype.remove = function(callback,productId,categoryId,offerId){
 
 
+	offerobj.removeOffer(function(err,res){
+		callback(err,res);
+	},productId,categoryId,offerId);
+};
 
 
 module.exports = Offer;
