@@ -170,7 +170,7 @@ exports.removeProduct = function(req,res){
 		}else{
 			//return number of rows that deleted
 			console.log("return "+result);
-			res.json({});
+			res.json(result);
 		}
 
 	}, req.params.productId,req.params.categoryId);
@@ -243,7 +243,7 @@ exports.viewCategories =function(req,res){
 			throw(err);
 		}else
 		{
-			res.json({'categories':result});
+			res.json(result);
 		}
 
 	},req.body);
